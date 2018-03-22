@@ -11,6 +11,7 @@ let active;
 let matchedCards;
 let freeze;
 let counter;
+let stars;
 
 //building card objects with properties and methods
 deck.forEach(function(item,index){
@@ -57,6 +58,8 @@ deck.forEach(function(item,index){
 
 //game initialization
 function init(){
+	stars=3;
+	$(".stars li").css("color", "#000");
 	active="";
 	matchedCards=[];
 	freeze=false;
@@ -91,20 +94,31 @@ function select (selectedId){
 	}
 	else if (selectedCard.symbol==active.symbol) {
 		if (selectedId==active.position){return;}
+		counter+=1;
+		$(".moves").text(counter);
 		selectedCard.match();
 		active.match();
 		active="";
+		if (counter>=15){$("#star3").css("color", "#eee"); stars=2};
+		if (counter>=30){$("#star2").css("color", "#eee"); stars=1};
+		if (counter>=45){$("#star1").css("color", "#eee"); stars=0};
 		if (matchedCards.length==16){
 			$(".message").text(`Congratulations! You matched all cards in just ${counter} moves!`);
+			alert(`Congratulations! You matched all cards in just ${counter} moves! You got ${stars} stars. Click restart button to play again`);
 			enableOptions();
 		}
 	}
 	else {
 		freeze=true;
 		setTimeout(function(){
+			counter+=1;
+			$(".moves").text(counter);
 			selectedCard.turnDown();
 			active.turnDown();
 			active="";
+			if (counter>=15){$("#star3").css("color", "#eee"); stars=2};
+			if (counter>=30){$("#star2").css("color", "#eee"); stars=1};
+			if (counter>=45){$("#star1").css("color", "#eee"); stars=0};
 			freeze=false;
 		},500);
 		
@@ -122,9 +136,7 @@ function enableOptions() {
 
 //event handler when clicking on a card
 $(".deck").on("click",".card:not(.match)", function(e){
-	if (freeze==false){
-		counter+=1;
-		$(".moves").text(counter);
+	if (freeze==false){		
 		select(this.id);
 	}
 });
