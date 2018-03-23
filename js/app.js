@@ -12,6 +12,10 @@ let matchedCards;
 let freeze;
 let counter;
 let stars;
+var minutesLabel = document.getElementById("minutes");
+var secondsLabel = document.getElementById("seconds");
+var totalSeconds = 0;
+let timer;
 
 //building card objects with properties and methods
 deck.forEach(function(item,index){
@@ -81,6 +85,9 @@ function init(){
 		$("#hasSymbols").prop( "disabled", true );
 		$("#hasSounds").prop( "disabled", true );
 	});
+	totalSeconds = 0;
+	clearInterval(timer);
+	timer=setInterval(setTime, 1000);
 	enableOptions();
  }
 
@@ -104,7 +111,11 @@ function select (selectedId){
 		if (counter>=45){$("#star1").css("color", "#eee"); stars=0};
 		if (matchedCards.length==16){
 			$(".message").text(`Congratulations! You matched all cards in just ${counter} moves!`);
-			alert(`Congratulations! You matched all cards in just ${counter} moves! You got ${stars} stars. Click restart button to play again`);
+			clearInterval(timer);
+			setTimeout(function(){
+				alert(`Congratulations! You matched all cards in just ${counter} moves in ${minutesLabel.innerHTML}.${secondsLabel.innerHTML}! You got ${stars} stars. Click restart button to play again`);
+			},500);
+			
 			enableOptions();
 		}
 	}
@@ -185,6 +196,24 @@ function playSound(audioEl) {
           var sound = document.getElementById(audioEl);
           sound.play();
       }
+
+// timer settings	  
+
+function setTime() {
+  ++totalSeconds;
+  secondsLabel.innerHTML = pad(totalSeconds % 60);
+  minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60)); 
+}
+
+function pad(val) {
+  var valString = val + "";
+  if (valString.length < 2) {
+    return "0" + valString;
+  } else {
+    return valString;
+  }
+}
+
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
